@@ -1,13 +1,12 @@
 ---
-title: The Bot
-emoji: 🏆
-colorFrom: pink
-colorTo: red
+title: Tthe Bot
+emoji: 💻
+colorFrom: red
+colorTo: pink
 sdk: gradio
-sdk_version: 5.26.0
+sdk_version: 5.25.2
 app_file: app.py
 pinned: false
-license: apache-2.0
 ---
 
 Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
