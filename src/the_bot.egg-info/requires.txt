@@ -1,0 +1,10 @@
+click
+gradio[oauth]>=5.26.0
+requests>=2.32.3
+transformers>=4.50.0
+
+[dev]
+pytest>=8.3.5
+pytest-asyncio>=0.25.3
+ruff
+pre-commit
