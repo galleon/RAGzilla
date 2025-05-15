@@ -12,12 +12,30 @@ Classifier: Intended Audience :: Information Technology
 Classifier: Intended Audience :: Science/Research
 Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
 Classifier: Topic :: Scientific/Engineering :: Information Analysis
-Requires-Python: >=3.10
+Requires-Python: <3.13,>=3.10
 Description-Content-Type: text/markdown
+Requires-Dist: arxiv>=2.2.0
+Requires-Dist: beautifulsoup4>=4.13.4
 Requires-Dist: click
 Requires-Dist: gradio[oauth]>=5.26.0
+Requires-Dist: langchain-community>=0.3.23
+Requires-Dist: langchain-google-genai>=2.1.4
+Requires-Dist: langchain-groq>=0.3.2
+Requires-Dist: langchain-huggingface>=0.2.0
+Requires-Dist: langchain-tavily>=0.1.6
+Requires-Dist: langgraph>=0.4.3
+Requires-Dist: pandas>=2.2.3
+Requires-Dist: pgvector>=0.4.1
+Requires-Dist: python-dotenv>=1.1.0
 Requires-Dist: requests>=2.32.3
+Requires-Dist: selenium>=4.32.0
+Requires-Dist: supabase>=2.15.1
+Requires-Dist: tenacity>=9.1.2
+Requires-Dist: tqdm>=4.67.1
 Requires-Dist: transformers>=4.50.0
+Requires-Dist: webdriver-manager>=4.0.2
+Requires-Dist: wikipedia>=1.4.0
+Requires-Dist: yt-dlp>=2025.4.30
 Provides-Extra: dev
 Requires-Dist: pytest>=8.3.5; extra == "dev"
 Requires-Dist: pytest-asyncio>=0.25.3; extra == "dev"
@@ -25,13 +43,13 @@ Requires-Dist: ruff; extra == "dev"
 Requires-Dist: pre-commit; extra == "dev"
 
 ---
-title: Template Final Assignment
+title: The Bot
 emoji: 🕵🏻‍♂️
 colorFrom: indigo
 colorTo: indigo
 sdk: gradio
 sdk_version: 5.25.2
-app_file: isrc/the_bot/app.py
+app_file: src/the_bot/app.py
 pinned: false
 hf_oauth: true
 # optional, default duration is 8 hours/480 minutes. Max duration is 30 days/43200 minutes.
