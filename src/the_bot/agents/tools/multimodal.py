@@ -27,13 +27,14 @@ def image_analysis_tool(
     Raises:
         RuntimeError: If processing fails
     """
-    print(__file__)
-
     try:
+        google_api_key = os.getenv("GEMINI_API_KEY", None)
+
         llm = ChatGoogleGenerativeAI(
             model=model_id,
             temperature=0,
-            max_retries=2
+            max_retries=2,
+            google_api_key=google_api_key
         )
 
         with open(file_path, "rb") as image_file:
@@ -71,13 +72,14 @@ def audio_analysis_tool(
     Raises:
         RuntimeError: If processing fails
     """
-    print(__file__)
-
     try:
+        google_api_key = os.getenv("GEMINI_API_KEY", None)
+
         llm = ChatGoogleGenerativeAI(
             model=model_id,
             temperature=0,
-            max_retries=2
+            max_retries=2,
+            google_api_key=google_api_key,
         )
 
         with open(file_path, "rb") as image_file:
@@ -119,13 +121,14 @@ def video_analysis_tool(
     Raises:
         RuntimeError: If processing fails
     """
-    print(__file__)
-
     try:
+        google_api_key = os.getenv("GEMINI_API_KEY", None)
+
         llm = ChatGoogleGenerativeAI(
             model=model_id,
             temperature=0,
-            max_retries=2
+            max_retries=2,
+            google_api_key=google_api_key
         )
 
         with open(file_path, "rb") as image_file:
@@ -170,8 +173,9 @@ def youtube_analysis_tool(
     Raises:
            RuntimeError: If processing fails
     """
-    print(__file__)
     try:
+        google_api_key = os.getenv("GEMINI_API_KEY", None)
+
         # Validate URL
         parsed_url = urlparse(url)
         if not all([parsed_url.scheme, parsed_url.netloc]):
@@ -185,7 +189,8 @@ def youtube_analysis_tool(
         llm = ChatGoogleGenerativeAI(
             model=model_id,
             temperature=0,
-            max_retries=2
+            max_retries=2,
+            google_api_key=google_api_key
         )
 
         try:
@@ -213,12 +218,14 @@ def youtube_analysis_tool(
 Title: {title}
 URL: {url}
 Description: {description}
-Please provide a detailed analysis focusing on:
+Question: {question}
+Please answer the question focusing on:
 1. Main topic and key points from the title and description
 2. Expected visual elements and scenes
 3. Overall message or purpose
 4. Target audience"""
 
+                    print(prompt)
                     # Use the LLM with proper message format
                     messages = [HumanMessage(content=prompt)]
                     response = llm.invoke(messages)

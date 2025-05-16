@@ -48,8 +48,6 @@ def arxiv_search(query: str) -> dict:
     Args:
         query: The search query.
     """
-    print(__file__)
-
     search_docs = ArxivLoader(query=query, load_max_docs=3).load()
     formatted_search_docs = "\n\n---\n\n".join(
         [

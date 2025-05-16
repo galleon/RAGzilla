@@ -157,10 +157,25 @@ class Agent:
                 example_msg = HumanMessage(
                     content=f"Here I provide a similar question and answer for reference: \n\n{similar_question[0].page_content}",
                 )
-                return {"messages": [sys_msg] + state["messages"] + [example_msg]}
+                messages = [sys_msg] + state["messages"] # + [example_msg]
+
+                for i, m in enumerate(messages):
+                    print(f"-> {i}")
+                    print(m.pretty_print())
+
+                return {"messages": messages}
+                # return {"messages": [sys_msg] + state["messages"] + [example_msg]}
             else:
                 # Handle the case when no similar questions are found
-                return {"messages": [sys_msg] + state["messages"]}
+                #
+                messages = [sys_msg] + state["messages"]
+
+                for i, m in enumerate(messages):
+                    print(f"-> {i}")
+                    print(m.pretty_print())
+
+                return {"messages": messages}
+                # return {"messages": [sys_msg] + state["messages"]}
 
         builder = StateGraph(MessagesState)
         builder.add_node(retriever)
@@ -330,16 +345,12 @@ For example, if asked "What is the capital of France?", respond simply with "Par
             # answer = self.agent.run(full_prompt)
 
             messages = [HumanMessage(content=full_prompt)]
-            print("\n\n=== === ===")
-            for m in messages["messages"]:
-                m.pretty_print()
-                print("> --")
+            print("\n\n=== vvv ===")
             messages = self.agent.invoke({"messages": messages})
-            print("=== === ===")
             for m in messages["messages"]:
                 m.pretty_print()
                 print("< --")
-            print("=== === ===\n\n")
+            print("=== ^^^ ===\n\n")
             answer = messages["messages"][-1].content
 
             # Clean up the answer to ensure it's in the expected format
