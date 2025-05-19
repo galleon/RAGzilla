@@ -1,9 +1,9 @@
 .gitattributes
+.gitignore
 README.md
 pyproject.toml
 requirements.txt
 src/the_bot/__init__.py
-src/the_bot/dump_leaderboard.py
 src/the_bot/main.py
 src/the_bot.egg-info/PKG-INFO
 src/the_bot.egg-info/SOURCES.txt
@@ -14,6 +14,8 @@ src/the_bot.egg-info/top_level.txt
 src/the_bot/agents/__init__.py
 src/the_bot/agents/core.py
 src/the_bot/agents/utils.py
+src/the_bot/agents/__pycache__/__init__.cpython-312.pyc
+src/the_bot/agents/__pycache__/core.cpython-312.pyc
 src/the_bot/agents/tools/__init__.py
 src/the_bot/agents/tools/analyze_csv_file.py
 src/the_bot/agents/tools/analyze_excel_file.py
@@ -27,4 +29,3 @@ src/the_bot/agents/tools/search.py
 src/the_bot/agents/tools/summarize_text.py
 src/the_bot/api/__init__.py
 src/the_bot/api/client.py
-tests/test_gaia.py

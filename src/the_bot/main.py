@@ -7,6 +7,7 @@ import requests
 import pandas as pd
 
 from the_bot.agents.core import Agent
+from the_bot.agents.utils import get_score
 
 DEFAULT_API_URL = "https://agents-course-unit4-scoring.hf.space"
 
@@ -118,7 +119,7 @@ def run_and_submit_all(profile: gr.OAuthProfile | None):
     if profile:
         username = profile.username
 
-    # Fetch tasks
+    # fetch tasks
     questions_url = f"{DEFAULT_API_URL}/questions"
     try:
         resp = requests.get(questions_url, timeout=15)
@@ -127,10 +128,7 @@ def run_and_submit_all(profile: gr.OAuthProfile | None):
     except Exception as e:
         return f"Failed to fetch tasks: {e}", None
 
-    logger.debug(json.dumps(tasks, indent=2))
-    with open("tasks.json", "w") as f:
-        json.dump(tasks, f)
-
+    # fetch files attached to tasks
     for task in tasks:
         if task["file_name"]:
             resp = requests.get(f"{DEFAULT_API_URL}/files/{task['task_id']}")
@@ -151,7 +149,6 @@ def run_and_submit_all(profile: gr.OAuthProfile | None):
     results = []
     payload = []
     for task in tasks:
-        print(f"--> {task}")
         tid = task.get("task_id")
         logger.debug(f"Task ID: {tid}")
         q = task.get("question", "")
@@ -170,6 +167,14 @@ def run_and_submit_all(profile: gr.OAuthProfile | None):
     # Submit
     submit_url = f"{DEFAULT_API_URL}/submit"
     data = {"username": username, "agent_code": f"https://huggingface.co/spaces/{os.getenv('SPACE_ID')}/tree/main", "answers": payload}
+
+    res = get_score(data)
+    status_txt = (
+        f"User: {res.get('username')}  "
+        f"Score: {res.get('score')}%  "
+        f"Correct: {res.get('correct_count')}/{res.get('total_attempted')}"
+    )
+
     if username:
         try:
             resp = requests.post(submit_url, json=data, timeout=60)
@@ -183,9 +188,9 @@ def run_and_submit_all(profile: gr.OAuthProfile | None):
         except Exception as e:
             status = f"Submission failed: {e}"
 
-        return status, pd.DataFrame(results)
+        return status, pd.DataFrame(results), status_txt
     else:
-        return "Please log in to submit.", pd.DataFrame(results)
+        return "Please log in to submit.", pd.DataFrame(results), status_txt
 
 # --- Gradio UI ---
 
@@ -197,8 +202,9 @@ with gr.Blocks() as demo:
     run_btn = gr.Button("Run Evaluation & Submit All Answers")
     status_out = gr.Textbox(label="Status", interactive=False)
     results_tbl = gr.DataFrame(label="Results")
+    status_txt = gr.Textbox(label="Local Evaluation", interactive=False)
 
-    run_btn.click(fn=run_and_submit_all, outputs=[status_out, results_tbl])
+    run_btn.click(fn=run_and_submit_all, outputs=[status_out, results_tbl, status_txt])
 
 if __name__ == "__main__":
     logger.info("Launching Agent Gradio app…")

@@ -4,7 +4,7 @@ from collections.abc import Callable
 from typing import Any
 
 from langchain_community.vectorstores import SupabaseVectorStore
-from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq import ChatGroq
 from langchain_huggingface import ChatHuggingFace, HuggingFaceEmbeddings, HuggingFaceEndpoint
@@ -299,28 +299,26 @@ class Agent:
 
             # If there's a file, read it and include its content in the context
             if task_file_path:
-                try:
-                    with open(task_file_path, 'r') as f:
-                        file_content = f.read()
-
-                    # Determine file type from extension
-                    import os
-                    file_ext = os.path.splitext(task_file_path)[1].lower()
-
-                    context = f"""
-Question: {question}
-This question has an associated file. Here is the file content:
-```{file_ext}
-{file_content}
-```
-Analyze the file content above to answer the question.
-"""
-                except Exception as file_e:
+#                try:
+#                    with open(task_file_path, 'r') as f:
+#                        file_content = f.read()
+#
+#                    # Determine file type from extension
+#                    import os
+#                    file_ext = os.path.splitext(task_file_path)[1].lower()
+#
+#                    context = f"""
+#Question: {question}
+#This question has an associated file. Here is the file content:
+#```{file_ext}
+#{file_content}
+#```
+#Analyze the file content above to answer the question.
+#"""
+#                except Exception as file_e:
                     context = f"""
 Question: {question}
 This question has an associated file at path: {task_file_path}
-However, there was an error reading the file: {file_e}
-You can still try to answer the question based on the information provided.
 """
 
             # Check for special cases that need specific formatting
@@ -348,8 +346,12 @@ For example, if asked "What is the capital of France?", respond simply with "Par
             print("\n\n=== vvv ===")
             messages = self.agent.invoke({"messages": messages})
             for m in messages["messages"]:
-                m.pretty_print()
-                print("< --")
+                if isinstance(m, AIMessage):
+                    print(m.content)
+                    print(m.tool_calls)
+                    print(m.response_metadata)
+                    m.pretty_print()
+                    print("< --")
             print("=== ^^^ ===\n\n")
             answer = messages["messages"][-1].content
 
@@ -426,31 +428,3 @@ For example, if asked "What is the capital of France?", respond simply with "Par
             answer = answer[1:-1].strip()
 
         return answer
-
-# def build_agent(
-#     model_type: str = "OpenAIServerModel",
-#     model_id: str | None = None,
-#     api_key: str | None = None,
-#     api_base: str | None = None,
-#     temperature: float = 0.2,
-#     executor_type: str = "local",
-#     additional_imports: list[str] | None = None,
-#     tool_modules: list[str] | None = None,
-#     verbose: bool = False,
-#     client_kwargs: dict[str, Any] = dict(),
-#     timeout: int | None = None
-# ):
-
-#     llm_with_tools = llm.bind_tools(tools)
-
-#     builder = StateGraph(MessageState)
-#     builder.add_node(retriever)
-#     builder.add_node(assistant)
-#     builder.add_node(tools)
-
-#     builder.add_edge(START, "retriever")
-#     builder.add_edge("retriever", "assistant")
-#     builder.add_conditional_edges("assistant", tools_condition)
-#     builder.add_edge("tools", "assistant")
-
-#     return builder.compile()
