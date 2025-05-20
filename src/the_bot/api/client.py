@@ -1,5 +1,7 @@
-import requests
 from typing import Any
+
+import requests
+
 
 class GAIAApiClient:
     def __init__(self, api_url="https://agents-course-unit4-scoring.hf.space"):

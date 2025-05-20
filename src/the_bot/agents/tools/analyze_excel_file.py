@@ -1,5 +1,6 @@
 from langchain_core.tools import tool
 
+
 @tool
 def analyze_excel_file(file_path: str, query: str | None = None) -> str:
     """

@@ -1,6 +1,4 @@
 import logging
-
-from collections.abc import Callable
 from typing import Any
 
 from langchain_community.vectorstores import SupabaseVectorStore
@@ -8,10 +6,10 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq import ChatGroq
 from langchain_huggingface import ChatHuggingFace, HuggingFaceEmbeddings, HuggingFaceEndpoint
-from langgraph.graph import START, StateGraph, MessagesState
-from langgraph.prebuilt import tools_condition
-from langgraph.prebuilt import ToolNode
+from langgraph.graph import START, MessagesState, StateGraph
+from langgraph.prebuilt import ToolNode, tools_condition
 from supabase.client import create_client
+
 
 class Agent:
     def __init__(
@@ -22,10 +20,10 @@ class Agent:
         api_base: str | None = None,
         temperature: float = 0.2,
         executor_type: str = "local",
-        additional_imports: list[str] = list(),
-        tool_modules: list[str] = list(),
+        additional_imports: list[str] | None = None,
+        tool_modules: list[str] | None = None,
         verbose: bool = False,
-        client_kwargs: dict[str, Any] = dict(),
+        client_kwargs: dict[str, Any] | None = None,
         timeout: int = -1,
         system_prompt: str = "",
         supabase_url: str = "",
@@ -104,7 +102,7 @@ class Agent:
         #    verbosity_level=2 if self.verbose else 0,
         #    max_steps=5
         #)
-        with open("system_prompt.txt", "r", encoding="utf-8") as f:
+        with open("system_prompt.txt", encoding="utf-8") as f:
             system_prompt = f.read()
 
         # System message
@@ -154,9 +152,9 @@ class Agent:
             #]
 
             if similar_question:  # Check if the list is not empty
-                example_msg = HumanMessage(
-                    content=f"Here I provide a similar question and answer for reference: \n\n{similar_question[0].page_content}",
-                )
+#                example_msg = HumanMessage(
+#                    content=f"Here I provide a similar question and answer for reference: \n\n{similar_question[0].page_content}",
+#                )
                 messages = [sys_msg] + state["messages"] # + [example_msg]
 
                 for i, m in enumerate(messages):
@@ -295,7 +293,6 @@ class Agent:
 
             # Create a context with file information if available
             context = question
-            file_content = None
 
             # If there's a file, read it and include its content in the context
             if task_file_path:

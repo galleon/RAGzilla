@@ -1,7 +1,7 @@
+from langchain_community.document_loaders import ArxivLoader, WikipediaLoader
 from langchain_community.tools.tavily_search import TavilySearchResults
-from langchain_community.document_loaders  import WikipediaLoader
-from langchain_community.document_loaders  import ArxivLoader
 from langchain_core.tools import tool
+
 
 @tool
 def wiki_search(query: str) -> dict:

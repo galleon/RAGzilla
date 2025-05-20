@@ -1,0 +1,47 @@
+[
+  {
+    "user": "tog",
+    "score": "50.0%",
+    "correct": "10/20",
+    "timestamp": "2025-05-19T15:01:59.987605+00:00",
+    "agent_model_type": "google",
+    "agent_model_id": null,
+    "agent_api_base": null
+  },
+  {
+    "user": "tog",
+    "score": "25.0%",
+    "correct": "5/20",
+    "timestamp": "2025-05-19T15:31:31.346691+00:00",
+    "agent_model_type": "google",
+    "agent_model_id": "gemini-2.5-pro-preview-05-06",
+    "agent_api_base": null
+  },
+  {
+    "user": "tog",
+    "score": "45.0%",
+    "correct": "9/20",
+    "timestamp": "2025-05-20T04:24:01.449878+00:00",
+    "agent_model_type": "google",
+    "agent_model_id": "gemini-2.5-pro-preview-05-06",
+    "agent_api_base": null
+  },
+  {
+    "user": "tog",
+    "score": "45.0%",
+    "correct": "9/20",
+    "timestamp": "2025-05-20T04:51:40.412451+00:00",
+    "agent_model_type": "google",
+    "agent_model_id": "gemini-2.5-pro-preview-05-06",
+    "agent_api_base": null
+  },
+  {
+    "user": "tog",
+    "score": "40.0%",
+    "correct": "8/20",
+    "timestamp": "2025-05-20T06:08:12.895616+00:00",
+    "agent_model_type": "google",
+    "agent_model_id": "gemini-2.5-flash-preview-04-17",
+    "agent_api_base": null
+  }
+]

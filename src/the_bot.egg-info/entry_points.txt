@@ -1,2 +1,0 @@
-[console_scripts]
-the_bot_cli = the_bot.cli:cli

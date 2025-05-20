@@ -1,5 +1,6 @@
 from langchain_core.tools import tool
 
+
 @tool
 def summarize_text(text: str, max_length: int = 200) -> str:
     """

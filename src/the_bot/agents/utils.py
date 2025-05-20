@@ -30,7 +30,6 @@
 #         """Async version - just calls sync version since smolagents tools don't support async."""
 #         return self._run(query)
 
-from pandas import core
 
 
 def get_score(data:dict) -> dict:

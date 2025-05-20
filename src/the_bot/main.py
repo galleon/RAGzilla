@@ -1,10 +1,11 @@
 import json
 import logging
 import os
+from datetime import datetime, UTC
 
 import gradio as gr
-import requests
 import pandas as pd
+import requests
 
 from the_bot.agents.core import Agent
 from the_bot.agents.utils import get_score
@@ -25,6 +26,7 @@ fh = logging.FileHandler("main.log")
 fh.setFormatter(fmt)
 logger.addHandler(fh)
 
+
 def debug_environment():
     """Print which API vars are set (values redacted)."""
     for var in [
@@ -37,6 +39,59 @@ def debug_environment():
     ]:
         status = "[SET]" if os.getenv(var) else "[NOT SET]"
         print(f"{var}: {status}")
+
+
+def get_tasks() -> dict:
+    tasks = {}
+    # fetch tasks
+    questions_url = f"{DEFAULT_API_URL}/questions"
+    try:
+        resp = requests.get(questions_url, timeout=15)
+        resp.raise_for_status()
+        tasks = resp.json()
+    except Exception as e:
+        raise RuntimeError(f"Failed to fetch tasks: {e}") from e
+
+    # fetch files attached to tasks
+    for task in tasks:
+        if task["file_name"]:
+            try:
+                resp = requests.get(f"{DEFAULT_API_URL}/files/{task['task_id']}")
+                if resp.status_code == 200:
+                    with open(f"{task['file_name']}", "wb") as f:
+                        f.write(resp.content)
+                else:
+                    raise RuntimeError(f"Failed to fetch the file. Status code: {resp.status_code}")
+            except Exception as e:
+                raise RuntimeError(f"Failed to fetch file: {e}") from e
+
+    return tasks
+
+
+def save_results(data:dict) -> None:
+    with open("results.json", "r", encoding="utf-8") as f:
+        try:
+            d = json.load(f)
+            if not isinstance(d, list):
+                raise ValueError("JSON content must be a list of dictionaries.")
+        except json.JSONDecodeError:
+            d = []
+
+    data_ = data.copy()
+    data_.update({
+        "timestamp": datetime.now(UTC).isoformat(),
+        "agent_model_type": os.getenv("AGENT_MODEL_TYPE"),
+        "agent_model_id": os.getenv("AGENT_MODEL_ID"),
+        "agent_api_base": os.getenv("AGENT_API_BASE"),
+        })
+
+    print(d)
+    d.append(data_)
+    print(f"===\n{d}")
+
+    with open("results.json", "w", encoding="utf-8") as f:
+        json.dump(d, f, indent=2)
+
 
 class AgentWrapper:
     def __init__(self):
@@ -119,24 +174,11 @@ def run_and_submit_all(profile: gr.OAuthProfile | None):
     if profile:
         username = profile.username
 
-    # fetch tasks
-    questions_url = f"{DEFAULT_API_URL}/questions"
+    # Fetch tasks and assciated files
     try:
-        resp = requests.get(questions_url, timeout=15)
-        resp.raise_for_status()
-        tasks = resp.json()
+        tasks = get_tasks()
     except Exception as e:
-        return f"Failed to fetch tasks: {e}", None
-
-    # fetch files attached to tasks
-    for task in tasks:
-        if task["file_name"]:
-            resp = requests.get(f"{DEFAULT_API_URL}/files/{task['task_id']}")
-            if resp.status_code == 200:
-                with open(f"{task['file_name']}", "wb") as f:
-                    f.write(resp.content)
-            else:
-                logger.info(f"Failed to retrieve the file. Status code: {resp.status_code}")
+        return f"Agent initialization failed: {e}", None
 
     # Instantiate agent once
     try:
@@ -188,6 +230,13 @@ def run_and_submit_all(profile: gr.OAuthProfile | None):
         except Exception as e:
             status = f"Submission failed: {e}"
 
+        save_results(dict(
+            user=f"{res.get('username')}",
+            score=f"{res.get('score')}%",
+            correct=f"{res.get('correct_count')}/{res.get('total_attempted')}"
+            )
+        )
+
         return status, pd.DataFrame(results), status_txt
     else:
         return "Please log in to submit.", pd.DataFrame(results), status_txt
@@ -203,6 +252,9 @@ with gr.Blocks() as demo:
     status_out = gr.Textbox(label="Status", interactive=False)
     results_tbl = gr.DataFrame(label="Results")
     status_txt = gr.Textbox(label="Local Evaluation", interactive=False)
+
+
+
 
     run_btn.click(fn=run_and_submit_all, outputs=[status_out, results_tbl, status_txt])
 
