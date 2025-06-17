@@ -39,6 +39,9 @@ dependencies = [
     "webdriver-manager>=4.0.2",
     "wikipedia>=1.4.0",
     "yt-dlp>=2025.4.30",
+    "llama-index",
+    "llama-index-ollama",
+    "llama-index-openai",
 ]
 
 [project.optional-dependencies]

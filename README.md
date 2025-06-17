@@ -8,8 +8,7 @@ This project implements a Gradio-based web application that interacts with an AI
 .
 ├── .gitignore
 ├── README.md               # This file
-├── pyproject.toml          # Project metadata and dependencies for Poetry (if used)
-├── requirements.txt        # Project dependencies
+├── pyproject.toml          # Project metadata and dependencies
 └── src/
     └── the_bot/
         ├── __init__.py
@@ -35,9 +34,13 @@ This project implements a Gradio-based web application that interacts with an AI
 2.  **Install dependencies:**
     It's recommended to use a virtual environment.
     ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-    pip install -r requirements.txt
+    # Install uv if you haven't already (see https://github.com/astral-sh/uv)
+    # For example: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+    # Create a virtual environment and install dependencies
+    uv venv
+    source .venv/bin/activate  # On Windows use `.venv\Scripts\activate`
+    uv pip install -e .[dev]
     ```
 
 3.  **Set up environment variables:**

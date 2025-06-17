@@ -1,9 +1,0 @@
-gradio
-llama-index
-llama-index-ollama
-llama-index-openai
-python-dotenv
-requests
-tenacity
-transformers
-pytest
